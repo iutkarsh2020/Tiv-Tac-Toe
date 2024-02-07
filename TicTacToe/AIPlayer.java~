@@ -1,0 +1,78 @@
+/**
+ * Auto Generated Java Class.
+ */
+public class AIPlayer extends Player {
+  
+  /* ADD YOUR CODE HERE */
+  private String name;
+  private Player opponent;
+  public AIPlayer(String name, Player opponent){
+    this.name = name;
+    this.opponent = opponent;
+  }
+  public Player getOpponent(){
+    return opponent; 
+  }
+  public void setOpponent(Player opponent){
+    this.opponent = opponent;
+  }
+  public String toString(){
+    return name+ " (AI)";
+  }
+  // below 2 are mutually exclusive recursive methods, base case when AIPlayer has won the game
+  public double maxValue(TicTacToe game){
+    if(game.checkWin(this)){
+      return 1.0;
+    }
+    if(game.checkLose(this))
+      return -1.0;
+    if(game.checkDraw())
+      return 0.0;
+    char[][] b = game.getBoard();
+    char[][][] moves = game.possibleMoves(this);
+    // now we have all the possible boards after this player plays the game
+    double max = -1.0;
+    for(int i=0;i<moves.length;i++){
+       game.setBoard(moves[i]);
+       max = Math.max(max,minValue(game));
+    }
+    game.setBoard(b);
+    return max;
+  }
+  public double minValue(TicTacToe game){
+    if(game.checkWin(this)){
+      return 1.0;
+    }
+    if(game.checkLose(this))
+      return -1.0;
+    if(game.checkDraw())
+      return 0.0;
+    char[][] b = game.getBoard();
+    char[][][] moves = game.possibleMoves(this);
+    // now we have all the possible boards after this player plays the game
+    double min = 1.0;
+    for(int i=0;i<moves.length;i++){
+       game.setBoard(moves[i]);
+       min = Math.min(min,minValue(game));
+    }
+    game.setBoard(b);
+    return min;
+  }
+  public TicTacToe chooseMove(TicTacToe game){
+     // find all possible moves for the given board
+     char[][][] moves = game.possibleMoves(this);
+     char[][] b = game.getBoard();
+     double max = -1;
+     char[][] retboard = game.getBoard();
+     for(int i=0;i<moves.length;i++){
+       game.setBoard(moves[i]);
+       double num = minValue(game);
+       if(max<num){
+         max = num;
+         retboard = moves[i];
+       }
+     }
+     game.setBoard(retboard);
+     return game;
+  }
+} 
